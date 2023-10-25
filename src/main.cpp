@@ -13,7 +13,7 @@ void setup() {
   Serial.println("Encoder Testing...");
 }
 
-long position  = 0; //testing github
+long position  = 0; 
 
 void loop() {
   long newPosition;
@@ -26,8 +26,8 @@ void loop() {
   // reset both back to zero.
   if (Serial.available()) {
     //Serial.println(Hall_One.read());
-    Serial.read();
-    Serial.println("Reseting Count");
-    Hall_One.write(0);
+    String message = Serial.readStringUntil('\n'); //reads string until it sees a newline character, helps because if you are sending constant stream of data then timeout of 1 second doesnt effect it that much
+    //Serial.println(message);
+    //Hall_One.write(0);
   }
 }
