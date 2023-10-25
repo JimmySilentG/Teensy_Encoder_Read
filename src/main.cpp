@@ -13,7 +13,7 @@ void setup() {
   Serial.println("Encoder Testing...");
 }
 
-long position  = 0;
+long position  = 0; //testing github
 
 void loop() {
   long newPosition;
