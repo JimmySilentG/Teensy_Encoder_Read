@@ -6,28 +6,22 @@
 //   Good Performance: only the first pin has interrupt capability
 //   Low Performance:  neither pin has interrupt capability
 Encoder Hall_One(2, 3);
+Encoder Hall_Two(4, 5);
 //   avoid using pins with LEDs attached
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println("Encoder Testing...");
+  Serial.begin(115200); //teensy just uses maximum the usb allows so it doesnt matter what goes here
 }
 
-long position  = 0; 
+unsigned long axis1 = 0;
+unsigned long axis2 = 0; 
 
 void loop() {
-  long newPosition;
-  newPosition = Hall_One.read();
-  if (newPosition != position){
-    Serial.println(newPosition);
-    position = newPosition;
-  }
-  // if a character is sent from the serial monitor,
-  // reset both back to zero.
-  if (Serial.available()) {
-    //Serial.println(Hall_One.read());
-    String message = Serial.readStringUntil('\n'); //reads string until it sees a newline character, helps because if you are sending constant stream of data then timeout of 1 second doesnt effect it that much
-    //Serial.println(message);
-    //Hall_One.write(0);
-  }
+  axis1 = Hall_One.read() + 2147483648;
+  axis2 = Hall_Two.read() + 2147483648;
+  Serial.write(0xAA); 
+  Serial.write(0xAA);
+  Serial.write((uint8_t*)&axis1, sizeof(axis1));
+  Serial.write((uint8_t*)&axis2, sizeof(axis2));
+delay(0.002); //delay 2 millisecond each send cycle for 500hz send rate
 }
