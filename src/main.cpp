@@ -14,7 +14,7 @@ void setup() {
 }
 
 unsigned long axis1 = 0;
-unsigned long axis2 = 0; 
+unsigned long axis2 = 0;
 
 void loop() {
   axis1 = Hall_One.read() + 2147483648;
@@ -23,5 +23,5 @@ void loop() {
   Serial.write(0xAA);
   Serial.write((uint8_t*)&axis1, sizeof(axis1));
   Serial.write((uint8_t*)&axis2, sizeof(axis2));
-delay(0.002); //delay 2 millisecond each send cycle for 500hz send rate
+delay(2); //delay 2 millisecond each send cycle for 500hz send rate "not sure why it was 0.002 which was maxing out"
 }
