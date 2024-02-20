@@ -6,7 +6,7 @@
 //   Good Performance: only the first pin has interrupt capability
 //   Low Performance:  neither pin has interrupt capability
 Encoder Hall_One(2, 3);
-Encoder Hall_Two(4, 5);
+//Encoder Hall_Two(4, 5);
 //   avoid using pins with LEDs attached
 
 void setup() {
@@ -14,18 +14,18 @@ void setup() {
 }
 
 unsigned long axis1 = 0;
-unsigned long axis2 = 0;
+//unsigned long axis2 = 0;
 unsigned long counter = 0;
 
 void loop() {
   axis1 = Hall_One.read() + 2147483648;
-  axis2 = Hall_Two.read() + 2147483648;
+  //axis2 = Hall_Two.read() + 2147483648;
   axis1 = axis1 + floor(counter/500); // for manually incrementing values when I dont have motors wired in
-  axis2 = axis2 + floor(counter/500); // same here ^^
-  Serial.write(0xAA); 
+  //axis2 = axis2 + floor(counter/500); // same here ^^
+  Serial.write(0xAA); //send two back to back 170 bytes so RPI knows a new transmission is coming in
   Serial.write(0xAA);
-  Serial.write((uint8_t*)&axis1, sizeof(axis1));
-  Serial.write((uint8_t*)&axis2, sizeof(axis2));
+  Serial.write((uint8_t*)&axis1, sizeof(axis1)); //split up the axis1 variable into byte-sized pieces and send over serial
+  //Serial.write((uint8_t*)&axis2, sizeof(axis2));
   counter++;
 delay(2); //delay 2 millisecond each send cycle for 500hz send rate "not sure why it was 0.002 which was maxing out"
 }
