@@ -22,10 +22,16 @@ void loop() {
   //axis2 = Hall_Two.read() + 2147483648;
   axis1 = axis1 + floor(counter/500); // for manually incrementing values when I dont have motors wired in
   //axis2 = axis2 + floor(counter/500); // same here ^^
-  Serial.write(0xAA); //send two back to back 170 bytes so RPI knows a new transmission is coming in
-  Serial.write(0xAA);
-  Serial.write((uint8_t*)&axis1, sizeof(axis1)); //split up the axis1 variable into byte-sized pieces and send over serial
+  //Serial.write(0xAA); //send two back to back 170 bytes so RPI knows a new transmission is coming in
+  //Serial.write(0xAA);
+  //Serial.write((uint8_t*)&axis1, sizeof(axis1)); //split up the axis1 variable into byte-sized pieces and send over serial
   //Serial.write((uint8_t*)&axis2, sizeof(axis2));
+  char buffer[6]; //initialize character array of buffer 6 bytes long
+  if (Serial.available() >= 6) { //if there are 6 or bytes available to read
+    Serial.readBytes(buffer, 6); //read 6 bytes into the buffer
+    Serial.flush(); //flush transmission
+    Serial.println(buffer);
+  }
   counter++;
 delay(2); //delay 2 millisecond each send cycle for 500hz send rate "not sure why it was 0.002 which was maxing out"
 }
