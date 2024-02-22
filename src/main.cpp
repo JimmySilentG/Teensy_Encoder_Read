@@ -26,11 +26,14 @@ void loop() {
   //Serial.write(0xAA);
   //Serial.write((uint8_t*)&axis1, sizeof(axis1)); //split up the axis1 variable into byte-sized pieces and send over serial
   //Serial.write((uint8_t*)&axis2, sizeof(axis2));
-  char buffer[6]; //initialize character array of buffer 6 bytes long
   if (Serial.available() >= 6) { //if there are 6 or bytes available to read
-    Serial.readBytes(buffer, 6); //read 6 bytes into the buffer
+    float DutyCycleRecieved;
+    byte buffer[2];
+    Serial.readBytes((char*)buffer,2);
+    Serial.readBytes((char*)&DutyCycleRecieved, 6); //read 6 bytes into the buffer
     Serial.flush(); //flush transmission
-    Serial.println(buffer);
+    float DutyDouble = DutyCycleRecieved * 2.0;
+    Serial.write((uint8_t*)&DutyDouble, sizeof(DutyDouble));
   }
   counter++;
 delay(2); //delay 2 millisecond each send cycle for 500hz send rate "not sure why it was 0.002 which was maxing out"
