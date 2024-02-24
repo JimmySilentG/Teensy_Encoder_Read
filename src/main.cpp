@@ -31,11 +31,13 @@ void loop() {
   //Serial.write(0xAA);
   //Serial.write((uint8_t*)&axis1, sizeof(axis1)); //split up the axis1 variable into byte-sized pieces and send over serial
   //Serial.write((uint8_t*)&axis2, sizeof(axis2));
+  b1[0] = 0.0;
+  b2[0] = 0.0;
   if (Serial.available() >= 6) { //if there are 6 or bytes available to read
     //I think this all needs to be one function
     Serial.readBytes((char*)b1, 1);
     Serial.readBytes((char*)b2, 1); //read in first two bytes of the transmission to see if they match start sequence
-    while ((b1[0] != 0xAA) and (b2[0] != 0xAA)){ //while the first two bytes are not the 170 start bytes
+    while (!((b1[0] == 0xAA) and (b2[0] == 0xAA))){ //while the first two bytes are not the 170 start bytes
       b1[0] = b2[0]; //this logic should create the improved step through for better performance that i was looking for
       Serial.readBytes((char*)b2, 1); 
       count++;
