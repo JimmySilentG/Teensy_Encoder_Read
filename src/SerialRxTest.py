@@ -4,7 +4,7 @@ import time
 
 ser = serial.Serial('/dev/ttyACM0',115200,timeout = None) #open serial port assigned to teensy, this can change between ACMO and ACM1, set baudrate to 115200 even though teensy ignores it. timeout set to none so the port waits forever until the requested number of bytes are recieved
 
-DutyCycle = 40.00001 #message saved to local attribute
+DutyCycle = 41.00001 #message saved to local attribute
 DutyCycleBytes = struct.pack('f', DutyCycle) #package python float into 4 byte transmission to be send off(check struct documentation for byte order if necessary)
 for i in range(0,19):
     ser.write(b'\xa0') #first write two 170 bytes to serial to tell teensy next 4 bytes are pid command
