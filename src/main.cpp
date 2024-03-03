@@ -7,10 +7,7 @@
 //   Low Performance:  neither pin has interrupt capability
 Encoder Hall_One(2, 3);
 //   avoid using pins with LEDs attached
-
-void setup() {
-  Serial.begin(115200); //teensy just uses maximum the usb allows so it doesnt matter what goes here
-}
+IntervalTimer sersendTimer; //https://www.pjrc.com/teensy/td_timing_IntervalTimer.html
 
 unsigned long axis1 = 0;
 unsigned long counter = 0; //used for programmatically incrementing encoder while not hooked up
@@ -19,16 +16,26 @@ byte b2[1];
 float DutyCycleRecieved; //create variable to store duty cycle command calculated from RPI
 int count; //variable used to create logic same as ROS side to prevent excessively bad packets
 
-void loop() {
+void sendAxis() {
   axis1 = Hall_One.read() + 2147483648;
   //axis1 = axis1 + floor(counter/500); // for manually incrementing values when I dont have motors wired in
   Serial.write(0xAA); //send two back to back 170 bytes so RPI knows a new transmission is coming in
   Serial.write(0xAA);
   Serial.write((uint8_t*)&axis1, sizeof(axis1)); //split up the axis1 variable into byte-sized pieces and send over serial
+}
+
+void setup() {
+  Serial.begin(115200); //teensy just uses maximum the usb allows so it doesnt matter what goes here
+  sersendTimer.begin(sendAxis, 4000); //interrupt timer every 4000 microseconds for 250hz send rate
+}
+
+
+void loop() {
   b1[0] = 0.0;
   b2[0] = 0.0;
   if (Serial.available() >= 6) { //if there are 6 or bytes available to read
     //I think this all needs to be one function
+    sersendTimer.end();//this might might be violating the end() issue but i dont think so, if wonky behavior look here!
     Serial.readBytes((char*)b1, 1);
     Serial.readBytes((char*)b2, 1); //read in first two bytes of the transmission to see if they match start sequence
     while (!((b1[0] == 0xAA) and (b2[0] == 0xAA))){ //while the first two bytes are not the 170 start bytes
@@ -45,7 +52,7 @@ void loop() {
     Serial.readBytes((char*)&DutyCycleRecieved, 4); //next four bytes should be the good floating point duty cycle
     //float DutyDouble = DutyCycleRecieved * 2.0;
     //Serial.write((uint8_t*)&DutyDouble, sizeof(DutyDouble));
+    sersendTimer.begin(sendAxis, 4000);
   }
-  counter++;
-delayNanoseconds(1000000); //delay 1 millisecond trying to combat encoder drift??
+delayNanoseconds(250000); //delay (does not impact interrupts)
 }
