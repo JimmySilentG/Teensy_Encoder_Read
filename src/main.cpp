@@ -26,7 +26,7 @@ void sendAxis() {
 
 void setup() {
   Serial.begin(115200); //teensy just uses maximum the usb allows so it doesnt matter what goes here
-  sersendTimer.begin(sendAxis, 4000); //interrupt timer every 4000 microseconds for 250hz send rate
+  sersendTimer.begin(sendAxis, 1000000); //interrupt timer every 4000 microseconds for 250hz send rate
 }
 
 
