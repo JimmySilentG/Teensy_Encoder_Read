@@ -15,7 +15,8 @@ byte b1[1]; //temporary buffers used only to step through the incoming message a
 byte b2[1];
 float DutyCycleRecieved; //create variable to store duty cycle command calculated from RPI
 int count; //variable used to create logic same as ROS side to prevent excessively bad packets
-int baud;
+//int baud;
+int DutyCycleCommand;
 
 void sendAxis() {
   axis1 = Hall_One.read() + 2147483648;
@@ -33,9 +34,10 @@ void setup() {
   sersendTimer.begin(sendAxis, 4000); //interrupt timer every 4000 microseconds for 250hz send rate
   b1[0] = 0.0;
   b2[0] = 0.0;
-  baud = Serial.baud();
+  //baud = Serial.baud();
 }
 
+//pin 4 is dir 5 is speed
 
 void loop() {
   if (Serial.available() >= 6) { //if there are 6 or bytes available to read
@@ -54,8 +56,16 @@ void loop() {
       }
     }
     Serial.readBytes((char*)&DutyCycleRecieved, 4); //next four bytes should be the good floating point duty cycle
-    //float DutyDouble = DutyCycleRecieved * 2.0;
-    //Serial.write((uint8_t*)&DutyDouble, sizeof(DutyDouble));
+    DutyCycleCommand = round(DutyCycleRecieved * (256.0/100.0)); //need to convert floating duty cycle to integer duty cycle from 0-256
+    if (DutyCycleCommand <= 0) { //abs of zero is zero so it doesnt matter what postion direction pin is in
+      analogWrite(4, 256); //writing direction pin low for negative duty cycles
+      analogWrite(5, abs(DutyCycleCommand));
+    } else { //duty cycle commanded is positive
+      analogWrite(4, 0); //writing direction pin high for positive duty cycles
+      analogWrite(5, DutyCycleCommand);
+    }
+    //if we arent recieving anything then set the pins low so we dont break anything
+    //analogWrite(5,0);
   }
 //delayNanoseconds(250000); //delay (does not impact interrupts)*/
 }
