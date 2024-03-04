@@ -28,6 +28,7 @@ void sendAxis() {
 
 void setup() {
   //MUST SET BAUDRATE ON DEVICE THROUGH TERMINAL,TEENSY USES WHATEVER THE COMPUTER OR RPI USES
+  //OH MY DAYS THE ENCODER VOLTAGE WAS TOO LOW, WE GOT GOOD SIGNALS NOW BOYS
   Serial.begin(115200); //teensy just uses maximum the usb allows so it doesnt matter what goes here
   sersendTimer.begin(sendAxis, 4000); //interrupt timer every 4000 microseconds for 250hz send rate
   b1[0] = 0.0;
@@ -58,5 +59,5 @@ void loop() {
     //Serial.write((uint8_t*)&DutyDouble, sizeof(DutyDouble));
     sersendTimer.begin(sendAxis, 4000);
   }
-//delayNanoseconds(250000); //delay (does not impact interrupts)
+//delayNanoseconds(250000); //delay (does not impact interrupts)*/
 }
