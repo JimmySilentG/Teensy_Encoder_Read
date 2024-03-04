@@ -15,6 +15,7 @@ byte b1[1]; //temporary buffers used only to step through the incoming message a
 byte b2[1];
 float DutyCycleRecieved; //create variable to store duty cycle command calculated from RPI
 int count; //variable used to create logic same as ROS side to prevent excessively bad packets
+int baud;
 
 void sendAxis() {
   axis1 = Hall_One.read() + 2147483648;
@@ -22,17 +23,20 @@ void sendAxis() {
   Serial.write(0xAA); //send two back to back 170 bytes so RPI knows a new transmission is coming in
   Serial.write(0xAA);
   Serial.write((uint8_t*)&axis1, sizeof(axis1)); //split up the axis1 variable into byte-sized pieces and send over serial
+  //Serial.println(axis1 - 2147483648);
 }
 
 void setup() {
+  //MUST SET BAUDRATE ON DEVICE THROUGH TERMINAL,TEENSY USES WHATEVER THE COMPUTER OR RPI USES
   Serial.begin(115200); //teensy just uses maximum the usb allows so it doesnt matter what goes here
-  sersendTimer.begin(sendAxis, 1000000); //interrupt timer every 4000 microseconds for 250hz send rate
+  sersendTimer.begin(sendAxis, 4000); //interrupt timer every 4000 microseconds for 250hz send rate
+  b1[0] = 0.0;
+  b2[0] = 0.0;
+  baud = Serial.baud();
 }
 
 
 void loop() {
-  b1[0] = 0.0;
-  b2[0] = 0.0;
   if (Serial.available() >= 6) { //if there are 6 or bytes available to read
     //I think this all needs to be one function
     sersendTimer.end();//this might might be violating the end() issue but i dont think so, if wonky behavior look here!
@@ -54,5 +58,5 @@ void loop() {
     //Serial.write((uint8_t*)&DutyDouble, sizeof(DutyDouble));
     sersendTimer.begin(sendAxis, 4000);
   }
-delayNanoseconds(250000); //delay (does not impact interrupts)
+//delayNanoseconds(250000); //delay (does not impact interrupts)
 }
