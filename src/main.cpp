@@ -59,10 +59,10 @@ void loop() {
     DutyCycleCommand = round(DutyCycleRecieved * (256.0/100.0)); //need to convert floating duty cycle to integer duty cycle from 0-256
     if (DutyCycleCommand <= 0) { //abs of zero is zero so it doesnt matter what postion direction pin is in
       analogWrite(4, 256); //writing direction pin low for negative duty cycles
-      analogWrite(5, abs(DutyCycleCommand));
+      analogWrite(5, (8 + abs(DutyCycleCommand))); //increase these values by 10 because under 10 the motor cant overcome friction but that could f with pid tune
     } else { //duty cycle commanded is positive
       analogWrite(4, 0); //writing direction pin high for positive duty cycles
-      analogWrite(5, DutyCycleCommand);
+      analogWrite(5, (8 + DutyCycleCommand));
     }
     //if we arent recieving anything then set the pins low so we dont break anything
     //analogWrite(5,0);
