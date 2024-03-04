@@ -40,7 +40,6 @@ void setup() {
 void loop() {
   if (Serial.available() >= 6) { //if there are 6 or bytes available to read
     //I think this all needs to be one function
-    sersendTimer.end();//this might might be violating the end() issue but i dont think so, if wonky behavior look here!
     Serial.readBytes((char*)b1, 1);
     Serial.readBytes((char*)b2, 1); //read in first two bytes of the transmission to see if they match start sequence
     while (!((b1[0] == 0xAA) and (b2[0] == 0xAA))){ //while the first two bytes are not the 170 start bytes
@@ -57,7 +56,6 @@ void loop() {
     Serial.readBytes((char*)&DutyCycleRecieved, 4); //next four bytes should be the good floating point duty cycle
     //float DutyDouble = DutyCycleRecieved * 2.0;
     //Serial.write((uint8_t*)&DutyDouble, sizeof(DutyDouble));
-    sersendTimer.begin(sendAxis, 4000);
   }
 //delayNanoseconds(250000); //delay (does not impact interrupts)*/
 }
